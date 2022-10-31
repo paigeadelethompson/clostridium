@@ -1,0 +1,17 @@
+[package]
+name = "Clostridium"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+stable-vec = "0.4.0"
+sprs = "0.11.0"
+
+[dependencies.m68000]
+version = "0.1.1"
+features = ["cpu-mc68000"]
+
+[dependencies.sdl2]
+version = "0.31.0"

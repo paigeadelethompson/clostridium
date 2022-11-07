@@ -1,16 +1,18 @@
-use sdl2::video::FullscreenType::True;
-use crate::bootloader::load_boot_loader;
+#![allow(arithmetic_overflow)]
+
 use crate::cpu::initialize_cpu;
-use crate::memory::{initialize_memory, Memory, LOCATIONS_BEGIN};
-use crate::rom::load_ROM;
+use crate::memory::{initialize_memory};
 
 pub fn start() {
-    let mut memory = initialize_memory();
-    load_ROM(&mut memory);
-    load_boot_loader(&mut memory);
-    let mut cpu = initialize_cpu(&mut memory);
+    let mut memory = match initialize_memory() {
+        Ok(m) => m,
+        Err(e) => panic!("failed to initialize memory {}", e.to_string())
+    };
+
+    let mut cpu = initialize_cpu();
 
     loop {
-        cpu.interpreter(&mut memory);
+        println!("PC {:#08x} ", cpu.regs.pc);
+        println!("cycles {}", cpu.interpreter(&mut memory));
     }
 }

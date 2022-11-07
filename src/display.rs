@@ -1,18 +1,24 @@
+use std::error::Error;
 use sdl2::video::Window;
+use sdl2::VideoSubsystem;
+use crate::memory::{LOCATION_RAM_BEGIN, LOCATION_RAM_END, LOCATION_SED1376_FB_BEGIN, LOCATION_SED1376_FB_END, LOCATION_SED1376_REGISTERS_BEGIN, LOCATION_SED1376_REGISTERS_END};
 
 pub struct Display {
-    pub height: u8,
-    pub width: u8,
-    pub window: sdl2::video::Window
+    frame_buffer: Box<[u8]>,
+    window: Window,
+    registers: Box<[u8]>
 }
 
-pub fn init_video() -> Window {
-    let sdl = sdl2::init().unwrap();
-    let video_subsystem = sdl.video().unwrap();
-
-    video_subsystem
-        .window("Game", 900, 700)
+pub fn init_video() -> Result<Display, Box<dyn Error>> {
+    let d = sdl2::init()?
+        .video()?
+        .window("PalmOS", 100, 100)
         .resizable()
-        .build()
-        .unwrap()
+        .build()?;
+
+    Ok(Display {
+        frame_buffer: vec![0; (LOCATION_SED1376_FB_END - LOCATION_SED1376_FB_BEGIN) as usize].into_boxed_slice(),
+        registers: vec![0; (LOCATION_SED1376_REGISTERS_END - LOCATION_SED1376_REGISTERS_BEGIN) as usize].into_boxed_slice(),
+        window: d
+    })
 }
